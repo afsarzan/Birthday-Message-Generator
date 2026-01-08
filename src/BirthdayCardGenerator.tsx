@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
+import { Slider } from "@/components/ui/slider"; // Ensure this is installed
 import { Sparkles, Copy, Cake, History, Trash2 } from "lucide-react";
 
 interface SavedCard {
@@ -12,12 +13,12 @@ interface SavedCard {
 }
 
 export default function LuxuryBirthdayStacker() {
-  const [formData, setFormData] = useState({ name: '', age: '', hobby: '' });
+  const [formData, setFormData] = useState({ name: '', age: 25, hobby: '' });
   const [cardHistory, setCardHistory] = useState<SavedCard[]>([]);
 
   const generateJoke = () => {
     const { name, age, hobby } = formData;
-    if (!name && !age && !hobby) return;
+    if (!name && !hobby) return;
 
     const jokes = [
       `Happy ${age}th Birthday, ${name}! I was going to make a joke about you getting old, but I was afraid you'd hit me with your ${hobby} gear.`,
@@ -38,7 +39,7 @@ export default function LuxuryBirthdayStacker() {
 
   const clearHistory = () => setCardHistory([]);
 
-  // Color Palette mapping
+  // Color Palette
   const colors = {
     navy: "#000080",
     red: "#FF0000",
@@ -66,51 +67,61 @@ export default function LuxuryBirthdayStacker() {
         
         {/* LEFT: INPUT AREA */}
         <div className="lg:col-span-4 lg:sticky lg:top-12">
-            <Card className="border-2 shadow-2xl" style={{ borderColor: colors.navy }}>
+            <Card className="border-2 shadow-2xl overflow-hidden" style={{ borderColor: colors.navy }}>
                 <div className="h-2 w-full" style={{ backgroundColor: colors.red }}></div>
                 <CardHeader>
                     <CardTitle className="text-2xl font-bold" style={{ color: colors.navy }}>Generator</CardTitle>
-                    <CardDescription>Details for the guest of honor</CardDescription>
+                    <CardDescription>Customize the roast</CardDescription>
                 </CardHeader>
-                <CardContent className="space-y-4">
-                    <div className="space-y-2">
-                        <Label style={{ color: colors.brown }}>Name</Label>
+                <CardContent className="space-y-8">
+                    {/* Name Input */}
+                    <div className="space-y-3">
+                        <Label style={{ color: colors.brown }} className="font-bold">Recipient Name</Label>
                         <Input 
-                            placeholder="Recipient" 
+                            placeholder="e.g. Sarah" 
                             className="focus-visible:ring-0 border-2" 
-                            style={{ borderColor: `${colors.navy}30` }}
+                            style={{ borderColor: `${colors.navy}20` }}
                             value={formData.name}
                             onChange={(e) => setFormData({...formData, name: e.target.value})}
                         />
                     </div>
-                    <div className="grid grid-cols-2 gap-4">
-                        <div className="space-y-2">
-                            <Label style={{ color: colors.brown }}>Age</Label>
-                            <Input 
-                                type="number" 
-                                placeholder="Age" 
-                                style={{ borderColor: `${colors.navy}30` }}
-                                value={formData.age}
-                                onChange={(e) => setFormData({...formData, age: e.target.value})}
-                            />
+
+                    {/* Age Slider */}
+                    <div className="space-y-5">
+                        <div className="flex justify-between items-center">
+                            <Label style={{ color: colors.brown }} className="font-bold">Age</Label>
+                            <span className="text-lg font-black" style={{ color: colors.navy }}>{formData.age}</span>
                         </div>
-                        <div className="space-y-2">
-                            <Label style={{ color: colors.brown }}>Hobby</Label>
-                            <Input 
-                                placeholder="Hobby" 
-                                style={{ borderColor: `${colors.navy}30` }}
-                                value={formData.hobby}
-                                onChange={(e) => setFormData({...formData, hobby: e.target.value})}
-                            />
-                        </div>
+                        <Slider
+                            defaultValue={[formData.age]}
+                            max={100}
+                            min={1}
+                            step={1}
+                            onValueChange={(value) => setFormData({...formData, age: value[0]})}
+                            className="py-4"
+                            // Note: Customizing Slider colors often requires CSS overrides or inline styles on Slider primitive
+                        />
                     </div>
+
+                    {/* Hobby Input */}
+                    <div className="space-y-3">
+                        <Label style={{ color: colors.brown }} className="font-bold">Hobby</Label>
+                        <Input 
+                            placeholder="e.g. Golfing" 
+                            className="focus-visible:ring-0 border-2" 
+                            style={{ borderColor: `${colors.navy}20` }}
+                            value={formData.hobby}
+                            onChange={(e) => setFormData({...formData, hobby: e.target.value})}
+                        />
+                    </div>
+
                     <Button 
-                        className="w-full py-6 text-lg font-black uppercase tracking-widest transition-all hover:opacity-90 active:scale-95"
+                        className="w-full py-7 text-lg font-black uppercase tracking-widest transition-all hover:opacity-95 active:scale-95"
                         style={{ backgroundColor: colors.navy, color: 'white' }}
                         onClick={generateJoke}
                     >
                         <Sparkles className="mr-2 h-5 w-5" style={{ color: colors.red }} /> 
-                        Create Card
+                        Generate & Print
                     </Button>
                 </CardContent>
             </Card>
@@ -134,27 +145,25 @@ export default function LuxuryBirthdayStacker() {
 
             <div className="space-y-10">
                 {cardHistory.length === 0 ? (
-                    <div className="h-48 rounded-xl border-2 border-dashed flex flex-col items-center justify-center gap-3" style={{ borderColor: `${colors.navy}20`, color: `${colors.navy}40` }}>
-                        <p className="font-medium italic">Begin generation to fill the vault...</p>
+                    <div className="h-48 rounded-xl border-2 border-dashed flex flex-col items-center justify-center gap-3 text-center p-6" style={{ borderColor: `${colors.navy}20`, color: `${colors.navy}40` }}>
+                        <p className="font-medium italic">Your "Vault" is currently empty.<br/>Fill out the form to print your first card.</p>
                     </div>
                 ) : (
-                    cardHistory.map((card, index) => (
+                    cardHistory.map((card) => (
                         <div 
                             key={card.id}
-                            className="relative group transition-all duration-500 animate-in slide-in-from-bottom-10"
+                            className="relative group transition-all duration-500 animate-in slide-in-from-right-10"
                         >
-                            {/* Physical Card Mockup */}
                             <div 
-                                className="relative bg-white p-10 md:p-16 shadow-2xl border-l-[6px] transition-transform hover:-rotate-1"
-                                style={{ borderLeftColor: colors.red, borderRight: `1px solid ${colors.navy}10` }}
+                                className="relative bg-white p-10 md:p-16 shadow-2xl border-l-[8px] border-y border-r transition-all hover:translate-x-1"
+                                style={{ borderLeftColor: colors.red, borderColor: `${colors.navy}10` }}
                             >
-                                {/* Paper Texture/Crease Effect */}
-                                <div className="absolute top-0 left-0 w-12 h-full pointer-events-none opacity-10" 
+                                <div className="absolute top-0 left-0 w-16 h-full pointer-events-none opacity-[0.03]" 
                                      style={{ background: `linear-gradient(to right, ${colors.brown}, transparent)` }}></div>
                                 
                                 <div className="mb-8">
                                     <span className="text-[10px] uppercase tracking-[0.4em] font-black" style={{ color: colors.wine }}>
-                                        Officially For {card.name}
+                                        For: {card.name}
                                     </span>
                                     <p className="leading-relaxed text-2xl md:text-3xl font-serif italic mt-6" style={{ color: colors.brown }}>
                                         "{card.text}"
@@ -162,25 +171,22 @@ export default function LuxuryBirthdayStacker() {
                                 </div>
                                 
                                 <div className="flex justify-between items-center border-t pt-6" style={{ borderColor: `${colors.navy}10` }}>
-                                    <span className="text-xs font-mono" style={{ color: `${colors.navy}40` }}>
-                                        SERIAL NO: {card.id}
+                                    <span className="text-[10px] font-mono opacity-30" style={{ color: colors.navy }}>
+                                        TS_{card.id}
                                     </span>
                                     <Button 
                                         variant="outline"
-                                        className="font-bold border-2 transition-colors"
-                                        style={{ borderColor: colors.navy, color: colors.red }}
+                                        className="font-bold border-2"
+                                        style={{ borderColor: colors.navy, color: colors.navy }}
                                         onClick={() => {
                                             navigator.clipboard.writeText(card.text);
-                                            alert("Copied to clipboard!");
                                         }}
                                     >
-                                        <Copy className="mr-2 h-4 w-4" /> Copy Message
+                                        <Copy className="mr-2 h-4 w-4" /> Copy
                                     </Button>
                                 </div>
                             </div>
-                            
-                            {/* Decorative "Shadow Stack" behind the card */}
-                            <div className="absolute -bottom-2 -right-2 w-full h-full -z-10 rounded-lg" style={{ backgroundColor: `${colors.navy}10` }}></div>
+                            <div className="absolute -bottom-3 -right-3 w-full h-full -z-10 rounded-lg" style={{ backgroundColor: `${colors.navy}08` }}></div>
                         </div>
                     ))
                 )}
