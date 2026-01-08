@@ -1,11 +1,11 @@
 import './App.css'
-import BirthdayGenerator from './BirthdayCardGenerator'
+import BirthdayCardSplitLayout from './BirthdayCardGenerator'
 
 function App() {
 
   return (
     <>
-      <BirthdayGenerator />
+      <BirthdayCardSplitLayout />
     </>
   )
 }
