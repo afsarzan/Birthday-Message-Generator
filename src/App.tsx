@@ -1,11 +1,11 @@
 import './App.css'
-import BirthdayCardSplitLayout from './BirthdayCardGenerator'
+import LuxuryBirthdayStacker from './BirthdayCardGenerator'
 
 function App() {
 
   return (
     <>
-      <BirthdayCardSplitLayout />
+      <LuxuryBirthdayStacker />
     </>
   )
 }

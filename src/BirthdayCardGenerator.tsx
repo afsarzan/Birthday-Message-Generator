@@ -3,165 +3,188 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { Sparkles, Copy, Cake, PenLine } from "lucide-react";
-import { toast } from "sonner"; 
+import { Sparkles, Copy, Cake, History, Trash2 } from "lucide-react";
 
-export default function BirthdayCardSplitLayout() {
+interface SavedCard {
+  id: number;
+  text: string;
+  name: string;
+}
+
+export default function LuxuryBirthdayStacker() {
   const [formData, setFormData] = useState({ name: '', age: '', hobby: '' });
-  const [message, setMessage] = useState('');
-
-  // Simple toast notification helper (replace alert)
-  const showToast = (msg: string) => {
-    // If using Sonner/Shadcn toast: toast.success(msg);
-    // Fallback for this example so it runs without dependencies:
-    const toastDiv = document.createElement('div');
-    toastDiv.className = 'fixed bottom-4 right-4 bg-slate-900 text-white px-4 py-2 rounded shadow-lg z-50 animate-in slide-in-from-bottom-5';
-    toastDiv.innerText = msg;
-    document.body.appendChild(toastDiv);
-    setTimeout(() => document.body.removeChild(toastDiv), 2000);
-  }
+  const [cardHistory, setCardHistory] = useState<SavedCard[]>([]);
 
   const generateJoke = () => {
     const { name, age, hobby } = formData;
-    if (!name && !age && !hobby) {
-        showToast("Please enter some details first! 🎂");
-        return;
-    }
-
-    const safeName = name || "Buddy";
-    const safeAge = age || "an undisclosed age";
-    const safeHobby = hobby || "doing nothing";
+    if (!name && !age && !hobby) return;
 
     const jokes = [
-      `Happy ${safeAge}th Birthday, ${safeName}! I was going to make a joke about getting older, but I was afraid you'd hit me with your ${safeHobby} gear.`,
-      `Congrats on turning ${safeAge}, ${safeName}! You're officially at the age where a "wild night out" means staying up past 10 PM to finish ${safeHobby}.`,
-      `${safeName}, you're ${safeAge} now. They say wisdom comes with age. In your case, it seems only an obsession with ${safeHobby} showed up.`,
-      `Happy Birthday ${safeName}! You are officially ${safeAge}. That is roughly the same amount of times you've mentioned ${safeHobby} this week alone.`,
-      `Don't worry about turning ${safeAge}, ${safeName}. You're still young enough to enjoy ${safeHobby}, but old enough to know you'll need ibuprofen tomorrow if you overdo it.`,
-      `Dearest ${safeName}, Happy ${safeAge}th! May your day be filled with joy, cake, and absolutely zero interruptions while you are ${safeHobby}.`
+      `Happy ${age}th Birthday, ${name}! I was going to make a joke about you getting old, but I was afraid you'd hit me with your ${hobby} gear.`,
+      `Congrats on turning ${age}, ${name}! You're now at the age where a "wild night out" means staying up to finish ${hobby}.`,
+      `${name}, you're ${age} now. They say wisdom comes with age. In your case, it seems only an obsession with ${hobby} showed up.`,
+      `Happy Birthday ${name}! You are officially ${age}. That is roughly the same amount of times you've mentioned ${hobby} this week.`,
+      `Don't worry about turning ${age}, ${name}. You're still young enough to enjoy ${hobby}, but old enough to need a nap afterwards.`
     ];
 
-    const randomJoke = jokes[Math.floor(Math.random() * jokes.length)];
-    setMessage(randomJoke);
+    const newCard = {
+      id: Date.now(),
+      text: jokes[Math.floor(Math.random() * jokes.length)],
+      name: name || "Legend"
+    };
+    
+    setCardHistory([newCard, ...cardHistory]);
   };
 
-  const copyToClipboard = () => {
-    navigator.clipboard.writeText(message);
-    showToast("✨ Message copied to clipboard! ✨");
-  };
+  const clearHistory = () => setCardHistory([]);
 
-  // Styles
-  const festiveBg = "bg-[radial-gradient(ellipse_at_top_left,_var(--tw-gradient-stops))] from-pink-100 via-purple-100 to-indigo-200";
-  const festiveTextGradient = "bg-gradient-to-r from-pink-600 to-indigo-600 bg-clip-text text-transparent";
-  const festiveAccentBtn = "bg-gradient-to-r from-pink-500 to-indigo-600 hover:from-pink-600 hover:to-indigo-700 text-white border-0 shadow-md hover:shadow-lg transition-all";
+  // Color Palette mapping
+  const colors = {
+    navy: "#000080",
+    red: "#FF0000",
+    wine: "#9E2A3A",
+    brown: "#3A2525"
+  };
 
   return (
-    // Main container: Flex on small screens, Grid on large screens to create the split view
-    <div className={`min-h-screen p-4 md:p-8 flex items-center justify-center ${festiveBg}`}>
-      <div className="w-full max-w-5xl grid grid-cols-1 lg:grid-cols-2 gap-4 items-stretch h-full min-h-[500px]">
+    <div className="min-h-screen p-6 md:p-12 flex flex-col items-center bg-[#fdfcfb]">
+      
+      {/* FESTIVE HEADER */}
+      <header className="text-center mb-12 space-y-3">
+        <div className="inline-flex items-center justify-center p-4 rounded-full mb-2" style={{ backgroundColor: `${colors.navy}10` }}>
+            <Cake className="h-10 w-10" style={{ color: colors.red }} />
+        </div>
+        <h1 className="text-5xl md:text-7xl font-black tracking-tighter uppercase" style={{ color: colors.navy }}>
+          The Birthday <span style={{ color: colors.red }}>Vault</span>
+        </h1>
+        <p className="font-bold tracking-[0.3em] uppercase text-xs" style={{ color: colors.wine }}>
+          Custom Wit • Premium Roast • Infinite Cheer
+        </p>
+      </header>
+
+      <div className="w-full max-w-6xl grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
         
-        {/* LEFT COLUMN: INPUT FORM */}
-        <Card className="w-full h-full border-purple-100/50 bg-white/90 backdrop-blur-sm shadow-xl relative overflow-hidden flex flex-col">
-           <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500"></div>
-          <CardHeader className="space-y-1 pb-2">
-            <div className="flex items-center gap-2">
-                <Cake className="h-6 w-6 text-purple-600" />
-                <CardTitle className={`text-2xl font-bold ${festiveTextGradient}`}>
-                    Card Creator
-                </CardTitle>
-            </div>
-            <CardDescription>
-              Fill in the blanks to generate some birthday wit.
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-5 pt-4 flex-1">
-            <div className="space-y-2">
-              <Label htmlFor="name" className="text-purple-900 font-medium">Recipient Name</Label>
-              <Input 
-                id="name" 
-                placeholder="e.g. Sarah" 
-                className="border-purple-200 bg-purple-50/30 focus-visible:ring-purple-400"
-                value={formData.name}
-                onChange={(e) => setFormData({...formData, name: e.target.value})}
-              />
-            </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="age" className="text-purple-900 font-medium">New Age</Label>
-                <Input 
-                  id="age" 
-                  type="number" 
-                  placeholder="30" 
-                  className="border-purple-200 bg-purple-50/30 focus-visible:ring-purple-400"
-                  value={formData.age}
-                  onChange={(e) => setFormData({...formData, age: e.target.value})}
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="hobby" className="text-purple-900 font-medium">Hobby/Obsession</Label>
-                <Input 
-                  id="hobby" 
-                  placeholder="Crossfit" 
-                  className="border-purple-200 bg-purple-50/30 focus-visible:ring-purple-400"
-                  value={formData.hobby}
-                  onChange={(e) => setFormData({...formData, hobby: e.target.value})}
-                />
-              </div>
-            </div>
-            <Button 
-              className={`w-full py-6 text-lg font-semibold mt-6 ${festiveAccentBtn}`}
-              onClick={generateJoke}
-            >
-              <Sparkles className="mr-2 h-5 w-5 animate-pulse" /> Write Message ✨
-            </Button>
-          </CardContent>
-        </Card>
-
-        {/* RIGHT COLUMN: THE "INSIDE OF THE CARD" */}
-        {/* We style this div to look like physical paper stock with a crease */}
-        <div className={`
-            relative h-full min-h-[400px] w-full
-            bg-[#fffef8] /* Warm off-white paper color */
-            rounded-r-xl rounded-l-sm shadow-2xl 
-            border-l-[3px] border-stone-200 /* Simulate the card crease/fold */
-            p-8 lg:p-12
-            flex flex-col justify-between
-            transition-all duration-500 ease-in-out
-            ${message ? 'opacity-100 translate-x-0' : 'opacity-90 lg:-translate-x-2'}
-        `}>
-            {/* Paper Texture noise overlay (optional, very subtle) */}
-            <div className="pointer-events-none absolute inset-0 opacity-[0.03] bg-[url('https://grainy-gradients.vercel.app/noise.svg')] mix-blend-overlay"></div>
-
-            <div className="flex-1 flex items-center justify-center">
-                {message ? (
-                     // The generated message displayed elegantly
-                    <div className="animate-in fade-in zoom-in duration-500 text-center">
-                         <p className="text-stone-800 leading-loose text-xl md:text-2xl font-serif italic">
-                            "{message}"
-                         </p>
+        {/* LEFT: INPUT AREA */}
+        <div className="lg:col-span-4 lg:sticky lg:top-12">
+            <Card className="border-2 shadow-2xl" style={{ borderColor: colors.navy }}>
+                <div className="h-2 w-full" style={{ backgroundColor: colors.red }}></div>
+                <CardHeader>
+                    <CardTitle className="text-2xl font-bold" style={{ color: colors.navy }}>Generator</CardTitle>
+                    <CardDescription>Details for the guest of honor</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                    <div className="space-y-2">
+                        <Label style={{ color: colors.brown }}>Name</Label>
+                        <Input 
+                            placeholder="Recipient" 
+                            className="focus-visible:ring-0 border-2" 
+                            style={{ borderColor: `${colors.navy}30` }}
+                            value={formData.name}
+                            onChange={(e) => setFormData({...formData, name: e.target.value})}
+                        />
                     </div>
-                ) : (
-                    // Placeholder state before generation
-                    <div className="text-center text-stone-300 flex flex-col items-center gap-3 animate-pulse">
-                        <PenLine className="h-12 w-12 opacity-50" />
-                        <p className="text-lg font-serif italic">The inside of the card is waiting for your words...</p>
+                    <div className="grid grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                            <Label style={{ color: colors.brown }}>Age</Label>
+                            <Input 
+                                type="number" 
+                                placeholder="Age" 
+                                style={{ borderColor: `${colors.navy}30` }}
+                                value={formData.age}
+                                onChange={(e) => setFormData({...formData, age: e.target.value})}
+                            />
+                        </div>
+                        <div className="space-y-2">
+                            <Label style={{ color: colors.brown }}>Hobby</Label>
+                            <Input 
+                                placeholder="Hobby" 
+                                style={{ borderColor: `${colors.navy}30` }}
+                                value={formData.hobby}
+                                onChange={(e) => setFormData({...formData, hobby: e.target.value})}
+                            />
+                        </div>
                     </div>
+                    <Button 
+                        className="w-full py-6 text-lg font-black uppercase tracking-widest transition-all hover:opacity-90 active:scale-95"
+                        style={{ backgroundColor: colors.navy, color: 'white' }}
+                        onClick={generateJoke}
+                    >
+                        <Sparkles className="mr-2 h-5 w-5" style={{ color: colors.red }} /> 
+                        Create Card
+                    </Button>
+                </CardContent>
+            </Card>
+        </div>
+
+        {/* RIGHT: THE STACK */}
+        <div className="lg:col-span-8 space-y-8">
+            <div className="flex items-center justify-between border-b pb-4" style={{ borderColor: `${colors.navy}20` }}>
+                <div className="flex items-center gap-2">
+                    <History className="h-5 w-5" style={{ color: colors.navy }} />
+                    <h2 className="font-black uppercase tracking-widest text-sm" style={{ color: colors.navy }}>
+                      Card Archive [{cardHistory.length}]
+                    </h2>
+                </div>
+                {cardHistory.length > 0 && (
+                    <Button variant="ghost" size="sm" onClick={clearHistory} style={{ color: colors.wine }}>
+                        <Trash2 className="h-4 w-4 mr-2" /> Clear All
+                    </Button>
                 )}
             </div>
 
-            {/* Bottom right copy button, only shows when message exists */}
-            {message && (
-                <div className="flex justify-end mt-8 animate-in fade-in slide-in-from-bottom-4">
-                     <Button 
-                        variant="outline" 
-                        size="sm" 
-                        className="border-stone-300 text-stone-600 hover:bg-stone-100 hover:text-stone-900 font-serif" 
-                        onClick={copyToClipboard}
-                    >
-                        <Copy className="mr-2 h-4 w-4" /> Copy Text
-                    </Button>
-                </div>
-            )}
+            <div className="space-y-10">
+                {cardHistory.length === 0 ? (
+                    <div className="h-48 rounded-xl border-2 border-dashed flex flex-col items-center justify-center gap-3" style={{ borderColor: `${colors.navy}20`, color: `${colors.navy}40` }}>
+                        <p className="font-medium italic">Begin generation to fill the vault...</p>
+                    </div>
+                ) : (
+                    cardHistory.map((card, index) => (
+                        <div 
+                            key={card.id}
+                            className="relative group transition-all duration-500 animate-in slide-in-from-bottom-10"
+                        >
+                            {/* Physical Card Mockup */}
+                            <div 
+                                className="relative bg-white p-10 md:p-16 shadow-2xl border-l-[6px] transition-transform hover:-rotate-1"
+                                style={{ borderLeftColor: colors.red, borderRight: `1px solid ${colors.navy}10` }}
+                            >
+                                {/* Paper Texture/Crease Effect */}
+                                <div className="absolute top-0 left-0 w-12 h-full pointer-events-none opacity-10" 
+                                     style={{ background: `linear-gradient(to right, ${colors.brown}, transparent)` }}></div>
+                                
+                                <div className="mb-8">
+                                    <span className="text-[10px] uppercase tracking-[0.4em] font-black" style={{ color: colors.wine }}>
+                                        Officially For {card.name}
+                                    </span>
+                                    <p className="leading-relaxed text-2xl md:text-3xl font-serif italic mt-6" style={{ color: colors.brown }}>
+                                        "{card.text}"
+                                    </p>
+                                </div>
+                                
+                                <div className="flex justify-between items-center border-t pt-6" style={{ borderColor: `${colors.navy}10` }}>
+                                    <span className="text-xs font-mono" style={{ color: `${colors.navy}40` }}>
+                                        SERIAL NO: {card.id}
+                                    </span>
+                                    <Button 
+                                        variant="outline"
+                                        className="font-bold border-2 transition-colors"
+                                        style={{ borderColor: colors.navy, color: colors.navy }}
+                                        onClick={() => {
+                                            navigator.clipboard.writeText(card.text);
+                                            alert("Copied to clipboard!");
+                                        }}
+                                    >
+                                        <Copy className="mr-2 h-4 w-4" /> Copy Message
+                                    </Button>
+                                </div>
+                            </div>
+                            
+                            {/* Decorative "Shadow Stack" behind the card */}
+                            <div className="absolute -bottom-2 -right-2 w-full h-full -z-10 rounded-lg" style={{ backgroundColor: `${colors.navy}10` }}></div>
+                        </div>
+                    ))
+                )}
+            </div>
         </div>
       </div>
     </div>
