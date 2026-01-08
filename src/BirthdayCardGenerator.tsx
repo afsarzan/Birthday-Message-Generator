@@ -168,7 +168,7 @@ export default function LuxuryBirthdayStacker() {
                                     <Button 
                                         variant="outline"
                                         className="font-bold border-2 transition-colors"
-                                        style={{ borderColor: colors.navy, color: colors.navy }}
+                                        style={{ borderColor: colors.navy, color: colors.red }}
                                         onClick={() => {
                                             navigator.clipboard.writeText(card.text);
                                             alert("Copied to clipboard!");
